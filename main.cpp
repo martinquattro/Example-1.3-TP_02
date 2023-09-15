@@ -17,39 +17,55 @@
 
 int main()
 {
-    DigitalIn gasDetector(D2);
-    DigitalIn overTempDetector(D3);
-    DigitalIn alarmOffButton(BUTTON1);
+    // DigitalIn gasDetector(D2);
+    gpio_t gasDetector;
+    gpio_init_in(&gasDetector, D2);
 
-    DigitalOut alarmLed(LED1);
+    // DigitalIn overTempDetector(D3);
+    gpio_t overTempDetector;
+    gpio_init_in(&overTempDetector, D3);
 
-    gasDetector.mode(PullDown);
-    overTempDetector.mode(PullDown);
+    // DigitalIn alarmOffButton(BUTTON1);
+    gpio_t alarmOffButton;
+    gpio_init_in(&alarmOffButton, BUTTON1);
 
-    alarmLed = OFF;
+    // DigitalOut alarmLed(LED1);
+    gpio_t alarmLed;
+    gpio_init_out(&alarmLed, LED1);
+
+    // gasDetector.mode(PullDown);
+    gpio_mode(&gasDetector, PullDown);
+
+    // overTempDetector.mode(PullDown);
+    gpio_mode(&overTempDetector, PullDown);
+
+    // alarmLed = OFF;
+    gpio_write(&alarmLed, OFF);
 
     bool alarmState = OFF;
 
     while (true) 
     {
-        if ( gasDetector || overTempDetector ) 
+        if ( gpio_read(&gasDetector) || gpio_read(&overTempDetector) ) 
         {
             printf("if ( gasDetector || overTempDetector ) \n");                    //!< The state of the pins are printed
-            printf("%s = %d\n","gasDetector = ", gasDetector.read());
-            printf("%s = %d\n","overTempDetector = ", overTempDetector.read());
-            printf("%s = %d\n","alarmState = ", alarmState);
+            printf("gasDetector = %d\n", gpio_read(&gasDetector));
+            printf("overTempDetector = %d\n", gpio_read(&overTempDetector));
+            printf("alarmState = %d\n", alarmState);
 
             alarmState = ON;
         }
 
-        alarmLed = alarmState;
+        // alarmLed = alarmState;
+        gpio_write(&alarmLed, alarmState);
 
-        if ( alarmOffButton ) 
+        // if ( alarmOffButton ) 
+        if ( gpio_read(&alarmOffButton) ) 
         {
             printf("if ( alarmOffButton ) \n");                                     //!< The state of the pins are  printed
-            printf("%s = %d\n","gasDetector = ", gasDetector.read());
-            printf("%s = %d\n","overTempDetector = ", overTempDetector.read());
-            printf("%s = %d\n","alarmState = ", alarmState);
+            printf("gasDetector = %d\n", gpio_read(&gasDetector));
+            printf("overTempDetector = %d\n", gpio_read(&overTempDetector));
+            printf("alarmState = %d\n", alarmState);
 
             alarmState = OFF;
         }
